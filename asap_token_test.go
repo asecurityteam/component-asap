@@ -13,15 +13,12 @@ import (
 )
 
 const (
-	validToken   = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c` //nolint
-	invalidToken = `NOTATOKEN`
+	validToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c` //nolint
 )
 
 const (
-	aud     = "testAudience"
-	iss     = "testIssuer"
-	keyURL1 = "https://localhost"
-	keyURL2 = "https://localhost"
+	aud = "testAudience"
+	iss = "testIssuer"
 )
 
 const (
