@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/vincent-petithory/dataurl"
 )
 
@@ -36,12 +37,12 @@ func TestASAPTokenComponent_New(t *testing.T) {
 	dataURIPK := dataurl.EncodeBytes(pk)
 	tests := []struct {
 		name    string
-		conf    *ASAPTokenConfig
+		conf    *TokenConfig
 		wantErr bool
 	}{
 		{
 			name: "missing or empty PK",
-			conf: &ASAPTokenConfig{
+			conf: &TokenConfig{
 				KID:       kid,
 				TTL:       tokenTTL,
 				Issuer:    iss,
@@ -51,7 +52,7 @@ func TestASAPTokenComponent_New(t *testing.T) {
 		},
 		{
 			name: "missing or empty KID",
-			conf: &ASAPTokenConfig{
+			conf: &TokenConfig{
 				PrivateKey: string(pk),
 				TTL:        tokenTTL,
 				Issuer:     iss,
@@ -61,7 +62,7 @@ func TestASAPTokenComponent_New(t *testing.T) {
 		},
 		{
 			name: "missing or empty issuer",
-			conf: &ASAPTokenConfig{
+			conf: &TokenConfig{
 				PrivateKey: string(pk),
 				KID:        kid,
 				TTL:        tokenTTL,
@@ -71,7 +72,7 @@ func TestASAPTokenComponent_New(t *testing.T) {
 		},
 		{
 			name: "missing or empty audiences",
-			conf: &ASAPTokenConfig{
+			conf: &TokenConfig{
 				PrivateKey: string(pk),
 				KID:        kid,
 				TTL:        tokenTTL,
@@ -81,7 +82,7 @@ func TestASAPTokenComponent_New(t *testing.T) {
 		},
 		{
 			name: "success",
-			conf: &ASAPTokenConfig{
+			conf: &TokenConfig{
 				PrivateKey: string(pk),
 				KID:        kid,
 				TTL:        tokenTTL,
@@ -92,7 +93,7 @@ func TestASAPTokenComponent_New(t *testing.T) {
 		},
 		{
 			name: "success-data-uri",
-			conf: &ASAPTokenConfig{
+			conf: &TokenConfig{
 				PrivateKey: dataURIPK,
 				KID:        kid,
 				TTL:        tokenTTL,
@@ -104,12 +105,60 @@ func TestASAPTokenComponent_New(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			a := &ASAPTokenComponent{}
+			a := &TokenComponent{}
 			_, err := a.New(context.Background(), tt.conf)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ASAPTokenComponent.New() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TokenComponent.New() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+		})
+	}
+}
+
+func TestOpsGenieClient_Name(t *testing.T) {
+	t.Parallel()
+
+	c := &TokenConfig{}
+	assert.Equal(t, c.Name(), "asaptoken")
+}
+
+func TestTokenComponent_ParseURL(t *testing.T) {
+	t.Parallel()
+	pkBytes, _ := rsa.GenerateKey(rand.Reader, 2048)
+	pkBlock := &pem.Block{
+		Type:  "PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(pkBytes),
+	}
+	pk := pem.EncodeToMemory(pkBlock)
+
+	tests := []struct {
+		name      string
+		conf      *TokenConfig
+		expectErr bool
+	}{
+		{
+			name: "valid endpoint",
+			conf: &TokenConfig{
+				PrivateKey: string(pk),
+				KID:        kid,
+				TTL:        tokenTTL,
+				Issuer:     iss,
+				Audiences:  []string{aud},
+			},
+			expectErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewComponent()
+			c.Settings()
+			_, err := c.New(context.Background(), tt.conf)
+			if tt.expectErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
 		})
 	}
 }

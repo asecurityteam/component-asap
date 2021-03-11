@@ -12,8 +12,8 @@ import (
 	"github.com/vincent-petithory/dataurl"
 )
 
-// ASAPTokenConfig is used to configure ASAP token generation.
-type ASAPTokenConfig struct {
+// TokenConfig is used to configure ASAP token generation.
+type TokenConfig struct {
 	PrivateKey string        `description:"RSA private key to use when signing tokens."`
 	KID        string        `description:"JWT kid value to include in tokens."`
 	TTL        time.Duration `description:"Lifetime of a token."`
@@ -22,25 +22,25 @@ type ASAPTokenConfig struct {
 }
 
 // Name of the config root.
-func (c *ASAPTokenConfig) Name() string {
+func (c *TokenConfig) Name() string {
 	return "asaptoken"
 }
 
-// ASAPTokenComponent is an ASAP decorator plugin.
-type ASAPTokenComponent struct{}
+// TokenComponent is an ASAP decorator plugin.
+type TokenComponent struct{}
 
 // NewComponent initializes a Component with default values.
-func NewComponent() *ASAPTokenComponent {
-	return &ASAPTokenComponent{}
+func NewComponent() *TokenComponent {
+	return &TokenComponent{}
 }
 
 // Settings generates a config populated with defaults.
-func (m *ASAPTokenComponent) Settings() *ASAPTokenConfig {
-	return &ASAPTokenConfig{}
+func (m *TokenComponent) Settings() *TokenConfig {
+	return &TokenConfig{}
 }
 
 // New generates the middleware.
-func (*ASAPTokenComponent) New(ctx context.Context, conf *ASAPTokenConfig) (func(http.RoundTripper) http.RoundTripper, error) {
+func (*TokenComponent) New(ctx context.Context, conf *TokenConfig) (func(http.RoundTripper) http.RoundTripper, error) {
 	if len(conf.PrivateKey) < 1 {
 		return nil, fmt.Errorf("private key value is empty")
 	}
