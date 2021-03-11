@@ -1,5 +1,5 @@
 <a id="markdown-component-asap---settings-component-for-generating-on-demand-asap-tokens" name="component-asap---settings-component-for-generating-on-demand-asap-tokens"></a>
-# component-httpclient - Settings component for generate HTTP clients
+# component-asap - Settings component for generating on demand ASAP tokens
 
 <a id="markdown-license" name="license"></a>
 ### License
