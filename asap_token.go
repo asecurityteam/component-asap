@@ -29,9 +29,9 @@ func (c *ASAPTokenConfig) Name() string {
 // ASAPTokenComponent is an ASAP decorator plugin.
 type ASAPTokenComponent struct{}
 
-// ASAPToken satisfies the NewComponent signature.
-func ASAPToken(_ context.Context, _ string, _ string, _ string) (interface{}, error) {
-	return &ASAPTokenComponent{}, nil
+// NewComponent initializes a Component with default values.
+func NewComponent() *ASAPTokenComponent {
+	return &ASAPTokenComponent{}
 }
 
 // Settings generates a config populated with defaults.
